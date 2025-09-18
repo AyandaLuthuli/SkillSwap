@@ -1,0 +1,3 @@
+const supabaseUrl = "https://your-project.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhueXV0ZnJ2c2Rpem5qdmp1dHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMDk4MjksImV4cCI6MjA3Mzc4NTgyOX0.rEFhpBrkYTbWH-T9t7aBfgmSkNYuDs_-ITKK02Wmj5U";

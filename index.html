@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillSwap SA - Login</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      :root {
+        --primary: #4a90e2;
+        --secondary: #50e3c2;
+        --accent: #f5a623;
+        --dark: #2c3e50;
+        --light: #f9f9f9;
+        --success: #27ae60;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: var(--dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 400px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .logo i {
+        color: var(--accent);
+      }
+
+      .tagline {
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+
+      .form-container {
+        padding: 30px 20px;
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+      }
+
+      .tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #777;
+        transition: all 0.3s ease;
+      }
+
+      .tab.active {
+        color: var(--primary);
+        border-bottom: 3px solid var(--primary);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      .input-with-icon {
+        position: relative;
+      }
+
+      .input-with-icon i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777;
+      }
+
+      .input-with-icon input {
+        padding-left: 45px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      input:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #3a80d2;
+        transform: translateY(-2px);
+      }
+
+      .alert {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .alert-error {
+        background: #ffebee;
+        color: #e53935;
+        border: 1px solid #ffcdd2;
+      }
+
+      .alert-success {
+        background: #e8f5e9;
+        color: #43a047;
+        border: 1px solid #c8e6c9;
+      }
+
+      .user-type-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .user-type {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .user-type.selected {
+        border-color: var(--primary);
+        background: rgba(74, 144, 226, 0.1);
+      }
+
+      .user-type i {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: #777;
+      }
+
+      .user-type.selected i {
+        color: var(--primary);
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          max-width: 100%;
+        }
+
+        .user-type-selector {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">
+          <i class="fas fa-exchange-alt"></i>
+          <span>SkillSwap SA</span>
+        </div>
+        <div class="tagline">Learn. Teach. Earn Rewards.</div>
+      </div>
+
+      <div class="form-container">
+        <div class="tabs">
+          <div class="tab active" id="login-tab">Login</div>
+          <div class="tab" id="signup-tab">Sign Up</div>
+        </div>
+
+        <div class="alert alert-error" id="error-alert"></div>
+        <div class="alert alert-success" id="success-alert"></div>
+
+        <div id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope"></i>
+              <input
+                type="email"
+                id="login-email"
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="login-password"
+                placeholder="Enter your password"
+              />
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="login-btn">Login</button>
+        </div>
+
+        <div id="signup-form" style="display: none">
+          <div class="form-group">
+            <label>I am a:</label>
+            <div class="user-type-selector">
+              <div class="user-type selected" data-role="learner">
+                <i class="fas fa-user-graduate"></i>
+                <div>Learner</div>
+              </div>
+              <div class="user-type" data-role="tutor">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <div>Tutor</div>
+              </div>
+              <div class="user-type" data-role="both">
+                <i class="fas fa-hands-helping"></i>
+                <div>Both</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signup-username">Username</label>
+            <div class="input-with-icon">
+              <i class="fas fa-user"></i>
+              <input
+                type="text"
+                id="signup-username"
+                placeholder="Choose a username"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signup-fullname">Full Name</label>
+            <div class="input-with-icon">
+              <i class="fas fa-user"></i>
+              <input
+                type="text"
+                id="signup-fullname"
+                placeholder="Enter your full name"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope"></i>
+              <input
+                type="email"
+                id="signup-email"
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="signup-password"
+                placeholder="Create a password"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="confirm-password"
+                placeholder="Confirm your password"
+              />
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="signup-btn">
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Supabase
+      const supabaseUrl = "https://hnyutfrvsdiznjvjutvw.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhueXV0ZnJ2c2Rpem5qdmp1dHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMDk4MjksImV4cCI6MjA3Mzc4NTgyOX0.rEFhpBrkYTbWH-T9t7aBfgmSkNYuDs_-ITKK02Wmj5U";
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      // DOM Elements
+      const loginTab = document.getElementById("login-tab");
+      const signupTab = document.getElementById("signup-tab");
+      const loginForm = document.getElementById("login-form");
+      const signupForm = document.getElementById("signup-form");
+      const errorAlert = document.getElementById("error-alert");
+      const successAlert = document.getElementById("success-alert");
+      const userTypes = document.querySelectorAll(".user-type");
+      let selectedRole = "learner";
+
+      // Tab switching
+      loginTab.addEventListener("click", () => {
+        loginTab.classList.add("active");
+        signupTab.classList.remove("active");
+        loginForm.style.display = "block";
+        signupForm.style.display = "none";
+      });
+
+      signupTab.addEventListener("click", () => {
+        signupTab.classList.add("active");
+        loginTab.classList.remove("active");
+        signupForm.style.display = "block";
+        loginForm.style.display = "none";
+      });
+
+      // User type selection
+      userTypes.forEach((type) => {
+        type.addEventListener("click", () => {
+          userTypes.forEach((t) => t.classList.remove("selected"));
+          type.classList.add("selected");
+          selectedRole = type.getAttribute("data-role");
+        });
+      });
+
+      // Show alert message
+      function showAlert(element, message) {
+        element.textContent = message;
+        element.style.display = "block";
+        setTimeout(() => {
+          element.style.display = "none";
+        }, 5000);
+      }
+
+      // Login function - FIXED VERSION
+      document
+        .getElementById("login-btn")
+        .addEventListener("click", async () => {
+          const email = document.getElementById("login-email").value;
+          const password = document.getElementById("login-password").value;
+
+          if (!email || !password) {
+            showAlert(errorAlert, "Please fill in all fields");
+            return;
+          }
+
+          try {
+            // Direct authentication with email and password
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: email,
+              password: password,
+            });
+
+            if (error) throw error;
+
+            showAlert(successAlert, "Login successful! Redirecting...");
+
+            // Redirect to dashboard or home page
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1500);
+          } catch (error) {
+            showAlert(errorAlert, error.message);
+          }
+        });
+
+      // Signup function
+      document
+        .getElementById("signup-btn")
+        .addEventListener("click", async () => {
+          const username = document.getElementById("signup-username").value;
+          const fullName = document.getElementById("signup-fullname").value;
+          const email = document.getElementById("signup-email").value;
+          const password = document.getElementById("signup-password").value;
+          const confirmPassword =
+            document.getElementById("confirm-password").value;
+
+          if (
+            !username ||
+            !fullName ||
+            !email ||
+            !password ||
+            !confirmPassword
+          ) {
+            showAlert(errorAlert, "Please fill in all fields");
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            showAlert(errorAlert, "Passwords do not match");
+            return;
+          }
+
+          if (password.length < 6) {
+            showAlert(errorAlert, "Password must be at least 6 characters");
+            return;
+          }
+
+          try {
+            // Create auth user
+            const { data: authData, error: authError } =
+              await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                  data: {
+                    full_name: fullName,
+                    role: selectedRole,
+                  },
+                },
+              });
+
+            if (authError) throw authError;
+
+            // Create profile record
+            const { data: profileData, error: profileError } = await supabase
+              .from("profiles")
+              .insert([
+                {
+                  username: username,
+                  email: email,
+                  password: password,
+                  full_name: fullName,
+                  role: selectedRole,
+                  bio: "",
+                  subjects_learn:
+                    selectedRole === "learner" || selectedRole === "both"
+                      ? []
+                      : null,
+                  subjects_teach:
+                    selectedRole === "tutor" || selectedRole === "both"
+                      ? []
+                      : null,
+                },
+              ]);
+
+            if (profileError) throw profileError;
+
+            showAlert(
+              successAlert,
+              "Account created successfully! Please check your email for verification."
+            );
+
+            // Clear form
+            document.getElementById("signup-username").value = "";
+            document.getElementById("signup-fullname").value = "";
+            document.getElementById("signup-email").value = "";
+            document.getElementById("signup-password").value = "";
+            document.getElementById("confirm-password").value = "";
+
+            // Switch to login tab after successful signup
+            setTimeout(() => {
+              loginTab.click();
+            }, 2000);
+          } catch (error) {
+            showAlert(errorAlert, error.message);
+          }
+        });
+    </script>
+  </body>
+</html>
